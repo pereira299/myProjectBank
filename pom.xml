@@ -10,13 +10,29 @@
     </parent>
     <groupId>br.edu.utfpr.td.tsi</groupId>
     <artifactId>myBankProject</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>myBankProject</name>
     <description>myBankProject</description>
     <properties>
         <java.version>18</java.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>br.edu.utfpr.td.tsi</groupId>
+            <artifactId>myBankProject-Clients</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.utfpr.td.tsi</groupId>
+            <artifactId>myBankProject-Loan</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.utfpr.td.tsi</groupId>
+            <artifactId>myProjectBank-Account</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.utfpr.td.tsi</groupId>
+            <artifactId>myBankProject-CreditCard</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
@@ -43,6 +59,7 @@
             <artifactId>spring-restdocs-webtestclient</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
