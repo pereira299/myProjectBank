@@ -4,6 +4,10 @@ import br.edu.utfpr.td.tsi.mybankprojectclients.controllers.PessoaFisicaControll
 import br.edu.utfpr.td.tsi.mybankprojectclients.controllers.PessoaJuridicaController;
 import br.edu.utfpr.td.tsi.mybankprojectclients.domains.PessoaFisica;
 import br.edu.utfpr.td.tsi.mybankprojectclients.domains.PessoaJuridica;
+import br.edu.utfpr.td.tsi.mybankprojectclients.models.IPessoaFisicaDAO;
+import br.edu.utfpr.td.tsi.mybankprojectclients.models.IPessoaJuridicaDAO;
+import br.edu.utfpr.td.tsi.mybankprojectclients.models.PessoaFisicaDAO;
+import br.edu.utfpr.td.tsi.mybankprojectclients.models.PessoaJuridicaDAO;
 
 import java.util.List;
 
@@ -11,9 +15,16 @@ public class ClientService {
     private PessoaJuridicaController juridica;
     private PessoaFisicaController fisica;
 
+    private IPessoaJuridicaDAO pessoaJuridica;
+    private IPessoaFisicaDAO pessoaFisica;
+
+    
     public ClientService() {
-        this.juridica = new PessoaJuridicaController();
-        this.fisica = new PessoaFisicaController();
+    	this.pessoaJuridica = new PessoaJuridicaDAO();
+    	this.pessoaFisica = new PessoaFisicaDAO();
+    	
+        this.juridica = new PessoaJuridicaController(pessoaJuridica);
+        this.fisica = new PessoaFisicaController(pessoaFisica);
     }
 
     //generate methods criar, atualizar, deletar, listar, buscar
