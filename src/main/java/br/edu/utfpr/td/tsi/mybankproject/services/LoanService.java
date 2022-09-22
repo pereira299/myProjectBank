@@ -1,24 +1,28 @@
 package br.edu.utfpr.td.tsi.mybankproject.services;
 
-import br.edu.utfpr.td.tsi.mybankprojectclients.utils.InternalErrorException;
-import br.edu.utfpr.tsi.td.mybankprojectloan.domains.Loan;
-import br.edu.utfpr.tsi.td.mybankprojectloan.domains.Parcel;
-
-import java.util.Calendar;
 import java.util.List;
 
-public class LoanService {
-    private final LoanService loanService;
+import br.edu.utfpr.tsi.td.mybankprojectloan.domains.Parcel;
+import br.edu.utfpr.tsi.td.mybankprojectloan.domains.Loan;
+import br.edu.utfpr.tsi.td.mybankprojectloan.models.ILoanDAO;
+import br.edu.utfpr.tsi.td.mybankprojectloan.models.LoanDAO;
+import br.edu.utfpr.td.tsi.mybankprojectclients.utils.InternalErrorException;
+import br.edu.utfpr.tsi.td.mybankprojectloan.controllers.LoanController;
 
-    public LoanService(LoanService loanService) {
-        this.loanService = loanService;
+public class LoanService {
+	
+    private final LoanController loanController;
+    private final ILoanDAO loanDao;
+
+    public LoanService() {
+        this.loanDao = new LoanDAO();
+        this.loanController = new LoanController(loanDao);
     }
 
     public Loan criar(Loan loan) throws InternalErrorException {
         try{
-            return loanService.criar(loan);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+        	/* TODO: */
+            return loanController.criar(loan);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }catch (IllegalArgumentException e){
@@ -28,9 +32,7 @@ public class LoanService {
 
     public void atualizar(int id, Loan loan) throws InternalErrorException {
         try{
-            loanService.atualizar(id, loan);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+        	loanController.atualizar(id, loan);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -42,9 +44,7 @@ public class LoanService {
 
     public void remover(int id) throws InternalErrorException {
         try{
-            loanService.remover(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+        	loanController.remover(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -55,9 +55,7 @@ public class LoanService {
 
     public Loan buscar(int id) throws InternalErrorException {
         try{
-            return loanService.buscar(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+            return loanController.buscar(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -66,11 +64,9 @@ public class LoanService {
         }
     }
 
-    public Loan buscarPorCliente(int id) throws InternalErrorException {
+    public List<Loan> buscarPorCliente(int id) throws InternalErrorException {
         try{
-            return loanService.buscarPorCliente(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+            return loanController.buscarPorCliente(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -81,9 +77,7 @@ public class LoanService {
 
     public void pagarParcela(int id) throws InternalErrorException {
         try{
-            loanService.pagarParcela(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+        	loanController.pagarParcela(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -94,9 +88,7 @@ public class LoanService {
 
     public void pagarParcela(int id, int qtd) throws InternalErrorException {
         try{
-            loanService.pagarParcela(id, qtd);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+        	loanController.pagarParcela(id, qtd);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -107,9 +99,7 @@ public class LoanService {
 
     public void quitar(int id) throws InternalErrorException {
         try{
-            loanService.quitar(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+        	loanController.quitar(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -120,9 +110,7 @@ public class LoanService {
 
     public List<Parcel> getParcelasPendentes(int id) throws InternalErrorException {
         try{
-            return loanService.getParcelasPendentes(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+            return loanController.getParcelasPendentes(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -133,9 +121,7 @@ public class LoanService {
 
     public List<Parcel> getParcelasPagas(int id) throws InternalErrorException {
         try{
-            return loanService.getParcelasPagas(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+            return loanController.getParcelasPagas(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -146,9 +132,7 @@ public class LoanService {
 
     public double getValorParcela(int id) throws InternalErrorException {
         try{
-            return loanService.getValorParcela(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+            return loanController.getValorParcela(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -159,9 +143,7 @@ public class LoanService {
 
     public double getValorTotal(int id) throws InternalErrorException {
         try{
-            return loanService.getValorTotal(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+            return loanController.getValorTotal(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -172,9 +154,7 @@ public class LoanService {
 
     public double getValorPago(int id) throws InternalErrorException {
         try{
-            return loanService.getValorPago(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+            return loanController.getValorPago(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }
@@ -185,9 +165,7 @@ public class LoanService {
 
     public double getValorPendente(int id) throws InternalErrorException {
         try{
-            return loanService.getValorPendente(id);
-        }catch (InternalErrorException e){
-            throw new InternalErrorException(e.getMessage());
+            return loanController.getValorPendente(id);
         }catch (NullPointerException e){
             throw new NullPointerException(e.getMessage());
         }

@@ -1,44 +1,36 @@
 package br.edu.utfpr.td.tsi.mybankproject.routes;
 
-import br.edu.utfpr.td.tsi.mybankproject.services.ClientService;
-import br.edu.utfpr.td.tsi.mybankprojectclients.domains.PessoaFisica;
-import br.edu.utfpr.td.tsi.mybankprojectclients.domains.PessoaJuridica;
+import br.edu.utfpr.tsi.td.mybankprojectloan.domains.Loan;
+import br.edu.utfpr.td.tsi.mybankproject.services.LoanService;
 import br.edu.utfpr.td.tsi.mybankprojectclients.utils.InternalErrorException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
-@Path("/client")
-public class Client {
-    private ClientService clientService;
+@Path("/loan")
+public class LoanRoute {
+    private LoanService loanService;
+
     @PathParam("id")
     private int id;
 
-    @PathParam("name")
-    private String name;
 
-    @PathParam("cpf")
-    private String cpf;
-
-    @PathParam("cnpj")
-    private String cnpj;
-
-    public Client() {
-        this.clientService = new ClientService();
+    public LoanRoute() {
+        this.loanService = new LoanService();
     }
 
-    //generate routes;
     @GET()
+    @Path("/{id}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response index() throws InternalErrorException {
-
+    public Response buscar() {
         try{
-            List<PessoaFisica> res = this.clientService.listarFisica();
-            return Response.ok(res).build();
+        	Loan loan = loanService.buscar(id);
+            return Response.ok(loan).build();
         }catch (InternalErrorException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
@@ -47,214 +39,220 @@ public class Client {
     @POST()
     @Produces("application/json")
     @Consumes("application/json")
-    public Response create(PessoaFisica pessoa) {
+    public Response criar(Loan loan) {
         try{
-            PessoaFisica p = this.clientService.criar(pessoa);
-            return Response.ok(p).build();
+            loan = loanService.criar(loan);
+            return Response.ok(loan).build();
         }catch (InternalErrorException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
     }
 
     @PATCH()
-    @Path("/{id}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response edit(PessoaFisica pessoa) {
+    public Response atualizar(Loan loan) {
         try{
-            this.clientService.atualizar(id, pessoa);
-            return Response.status(Response.Status.NO_CONTENT).build();
+            loanService.atualizar(id, loan);
+            return Response.ok().build();
         }catch (InternalErrorException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-        }
-    }
-
-    @GET()
-    @Path("/{id}")
-    @Consumes("application/json")
-    @Produces("application/json")
-    public Response show() {
-        try{
-            List<PessoaFisica> p = this.clientService.buscarFisica(id);
-            if(p.isEmpty()){
-                return Response.status(Response.Status.NOT_FOUND).entity("Cliente não encontrado").build();
-            }
-            PessoaFisica pessoa = p.get(0);
-            return Response.ok(pessoa).build();
-        }catch (InternalErrorException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }catch (IllegalArgumentException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-        }
-    }
-
-    @GET()
-    @Path("/nome/{name}")
-    public Response showByName() {
-        try{
-            List<PessoaFisica> p = this.clientService.buscarFisica(name);
-            if(p.isEmpty()){
-                return Response.status(Response.Status.NOT_FOUND).entity("Cliente não encontrado").build();
-            }
-            return Response.ok(p).build();
-        }catch (InternalErrorException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }catch (IllegalArgumentException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-        }
-    }
-
-    @GET()
-    @Path("/cpf/{cpf}")
-    public Response showByCpf() {
-        try{
-            List<PessoaFisica> p = this.clientService.buscarFisicaCPF(cpf);
-            if(p.isEmpty()){
-                return Response.status(Response.Status.NOT_FOUND).entity("Cliente não encontrado").build();
-            }
-            return Response.ok(p.get(0)).build();
-        }catch (InternalErrorException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }catch (IllegalArgumentException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
     }
 
     @DELETE()
-    @Path("/{id}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response delete() {
+    public Response remover() {
         try{
-            this.clientService.deletarFisica(id);
-            return Response.status(Response.Status.NO_CONTENT).build();
+            loanService.remover(id);
+            return Response.ok().build();
         }catch (InternalErrorException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }catch (IllegalArgumentException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
+        }catch (NullPointerException e){
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-        }
-    }
-
-    //Pessoa juridica
-
-    @GET()
-    @Path("/juridica")
-    @Produces("application/json")
-    @Consumes("application/json")
-    public Response indexJuridica() throws InternalErrorException {
-
-        try{
-            List<PessoaJuridica> res = this.clientService.listarJuridica();
-            return Response.ok(res).build();
-        }catch (InternalErrorException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }
-    }
-
-    @POST()
-    @Path("/juridica")
-    @Produces("application/json")
-    @Consumes("application/json")
-    public Response createJuridica(PessoaJuridica pessoa) {
-        try{
-            PessoaJuridica p = this.clientService.criar(pessoa);
-            return Response.ok(p).build();
-        }catch (InternalErrorException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }catch (IllegalArgumentException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }
-    }
-
-    @PATCH()
-    @Path("/juridica/{id}")
-    @Produces("application/json")
-    @Consumes("application/json")
-    public Response updateJuridica(PessoaJuridica pessoa) {
-        try{
-            this.clientService.atualizar(id, pessoa);
-            return Response.status(Response.Status.NO_CONTENT).build();
-        }catch (InternalErrorException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }catch (IllegalArgumentException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
     }
 
     @GET()
-    @Path("/juridica/{id}")
+    @Path("/client/{id}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response showJuridica() {
+    public Response buscarPorCliente(@PathParam("id") int id) {
         try{
-            List<PessoaJuridica> p = this.clientService.buscarJuridica(id);
-            if(p.isEmpty()){
-                return Response.status(Response.Status.NOT_FOUND).entity("Cliente não encontrado").build();
-            }
-            PessoaJuridica pessoa = p.get(0);
-            return Response.ok(pessoa).build();
+            var loans = loanService.buscarPorCliente(id);
+            return Response.ok(loans).build();
         }catch (InternalErrorException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
     }
 
     @GET()
-    @Path("/juridica/cnpj/{cnpj}")
+    @Path("/pagar/{id}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response showByCnpj() {
+    public Response pagarParcela(@PathParam("id") int id) {
         try{
-            List<PessoaJuridica> p = (List<PessoaJuridica>) this.clientService.buscarJuridicaCNPJ(cnpj);
-            if(p.isEmpty()){
-                return Response.status(Response.Status.NOT_FOUND).entity("Cliente não encontrado").build();
-            }
-            return Response.ok(p.get(0)).build();
+            loanService.pagarParcela(id);
+            return Response.ok().build();
         }catch (InternalErrorException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
     }
 
-    @DELETE()
-    @Path("/juridica/{id}")
+    @GET()
+    @Path("/pagar/{id}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response deleteJuridica() {
+    public Response pagarParcela(@PathParam("id") int id, @QueryParam("qtd") int qtd) {
         try{
-            this.clientService.deletarJuridica(id);
-            return Response.status(Response.Status.NO_CONTENT).build();
+            loanService.pagarParcela(id, qtd);
+            return Response.ok().build();
         }catch (InternalErrorException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }catch (NullPointerException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
     }
+
+    @GET()
+    @Path("/pagar/{id}/tudo")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response quitar(@PathParam("id") int id) {
+        try{
+            loanService.quitar(id);
+            return Response.ok().build();
+        }catch (InternalErrorException e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }catch (IllegalArgumentException e){
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET()
+    @Path("/parcelas/{id}")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response buscarParcelasPendentes(@PathParam("id") int id) {
+        try{
+            var parcelas = loanService.getParcelasPendentes(id);
+            return Response.ok(parcelas).build();
+        }catch (InternalErrorException e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }catch (IllegalArgumentException e){
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET()
+    @Path("/parcelas/{id}/pago")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response buscarParcelasPagas(@PathParam("id") int id) {
+        try{
+            var parcelas = loanService.getParcelasPagas(id);
+            return Response.ok(parcelas).build();
+        }catch (InternalErrorException e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }catch (IllegalArgumentException e){
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET()
+    @Path("/parcelas/{id}/valor")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response buscarValorParcela(@PathParam("id") int id) {
+        try{
+            var valor = loanService.getValorParcela(id);
+            return Response.ok(valor).build();
+        }catch (InternalErrorException e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }catch (IllegalArgumentException e){
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET()
+    @Path("/parcelas/{id}/valor/total")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response buscarValorTotal(@PathParam("id") int id) {
+        try{
+            var valor = loanService.getValorTotal(id);
+            return Response.ok(valor).build();
+        }catch (InternalErrorException e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }catch (IllegalArgumentException e){
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET()
+    @Path("/parcelas/{id}/valor/pago")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response buscarValorPago(@PathParam("id") int id) {
+        try{
+            var valor = loanService.getValorPago(id);
+            return Response.ok(valor).build();
+        }catch (InternalErrorException e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }catch (IllegalArgumentException e){
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET()
+    @Path("/parcelas/{id}/valor/pendente")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response buscarValorPendente(@PathParam("id") int id) {
+        try{
+            var valor = loanService.getValorPendente(id);
+            return Response.ok(valor).build();
+        }catch (InternalErrorException e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }catch (NullPointerException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }catch (IllegalArgumentException e){
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
 
 }
